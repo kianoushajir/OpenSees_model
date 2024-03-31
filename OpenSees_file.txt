@@ -1,0 +1,2365 @@
+#Case study tall buildings
+
+#kianoush ajir
+
+#Verified email: kianoush.ajir@sharif.edu
+
+wipe all ;
+
+puts "Begining of the analysis" ;
+
+model BasicBuilder -ndm 3 -ndf 6 ;
+
+##############################################
+
+puts "Defining geometric parameters" ;
+
+#area of thick beam
+
+set Ab [expr pow(1.83,2.0)] ;
+
+#area of thin beam
+
+set Abb [expr 1.83*0.92] ;
+
+#area of ordinary columns
+
+set Ac [expr 1.84*0.92] ;
+
+#area of rehabilitated column
+
+set Acc [expr 2.04*1.12] ;
+
+#accelaration of gravity
+
+set g 9.81 ;
+
+#unit weight of concrete
+
+set rho [expr 2200.0*$g] ;
+
+#set length of plan
+
+set L 48.0 ;
+
+#set width of plan
+
+set B 44.4 ;
+
+#set distance between columns along length of plan
+
+set Ls 6.0 ;
+
+#set distance between columns along width of plan
+
+set Bs [expr $B/5.0] ;
+
+#set heighth of first story
+
+set H1 5.3 ;
+
+#set heighth of type story
+
+set H 3.4 ;
+
+#set heighth of side beams
+
+set Hbs 1.8 ;
+
+#set heighth of inner beams
+
+set Hbi 0.9 ;
+
+#set width of side beams
+
+set Wbs 1.8 ;
+
+#set width of inner beams
+
+set Wbi 1.22 ;
+
+#set length of columns
+
+set Lc 1.8 ;
+
+#set width of columns
+
+set Wc 0.9 ;
+
+#define Area load
+
+set LL 4000.0 ;   
+
+set DL 4400.0 ;   
+
+#defining extensive loads
+
+set wyb [expr (($DL+$LL)*$Ls)+($rho*$Ab)]; 
+
+set wysb [expr ((($DL+$LL)*$Ls)+($rho*$Ab))/2.0]
+
+set wybb [expr (($DL+$LL)*$Ls)+($rho*$Abb)]; 
+
+set wxc [expr $rho*$Ac] ; 
+
+set wxcc [expr $rho*$Acc] ; 
+
+puts "Defining material properties" ;
+
+#setting properties of steel
+
+set FyAIV 517100000.0 ;   
+
+set FyAIII 413700000.0 ;  
+
+set Es 210000000000.0 ;
+
+set b 0.015 ;
+
+set Ro 15.0 ;
+
+set CR1 0.925 ;
+
+set CR2 0.15 ;
+
+#setting properties of ordinary concrete
+
+set lambda 0.15 ;
+
+set fc -70000000.0 ;
+
+set fu -12000000.0 ;
+
+set epsc -0.003 ;
+
+set epsu -0.004 ;
+
+set ft 5180000.0 ;
+
+set Et 3.569e+9 ;
+
+set epst 0.000129 ;
+
+set J 1.53;
+
+set G [expr $Et/2.4];
+
+
+#setting properties of one time confined concrete
+
+set fcc -73500000.0 ;
+
+set fuc -12600000.0 ;
+
+set epscc -0.00375 ;
+
+set epsuc -0.005 ;
+
+set ftc 5310000.0 ;
+
+set Etc 3.659e+9 ;
+
+set epstc 0.00013 ;
+
+#setting properties of two times confined concrete
+
+set fccc -77050000.0 ;
+
+set fucc -13100000.0 ;
+
+set epsccc -0.0046 ;
+
+set epsucc -0.0062 ;
+
+set ftcc 5440000.0 ;
+
+set Etcc 3.748e+9 ;
+
+set epstcc 0.00013 ;
+
+#setting properties of polymer concrete
+
+set fcp -67500000.0 ;
+
+set fup -50000000.0 ;
+
+set epscp -0.007 ;
+
+set epsup -0.013 ;
+
+set ftp 8340000.0 ;
+
+set Etp 1.995e+9 ;
+
+set epstp 0.00038 ;
+
+puts "Defining masses" ;
+
+#mass of horizontal beams from 1st to 25th floor
+
+set mbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Ab/$g)];
+
+#mass of horizontal beams from 25th to the last floor
+
+set mbbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Abb/$g)];
+
+#mass of vertical beams
+
+set mbv [expr (($rho*$Ab)/$g)] ;
+
+#mass of ordinary column
+
+set mc [expr $rho*$Ac/$g] ;
+
+#mass of rehabilitated column
+
+set mcc [expr $rho*$Acc/$g] ;
+
+puts "end of defining parameters" ;
+
+###############################################
+
+puts "Defining nodes" ;
+
+puts "Defining nodes forrrrr center of diaphragmsss" ;
+
+node 150 [expr 0.5*$L] [expr 0.5*$B] $H1 ;
+
+for {set i 250} {$i <= 3850} {incr i 100} {;
+
+  node $i [expr 0.5*$L] [expr 0.5*$B] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+puts "end offf Defining nodes forrrr center of diaphragmsss" ;
+
+###############################################
+
+
+# node for number 1 columns
+
+node 1 0.0 0.0 0.0 ;
+
+node 101 0.0 0.0 $H1 ;
+
+for {set i 201} {$i <= 3801} {incr i 100} {;
+
+  node $i 0.0 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 2 columns
+
+node 2 $Ls 0.0 0.0 ;
+
+node 102 $Ls 0.0 $H1 ;
+
+for {set i 202} {$i <= 3802} {incr i 100} {;
+
+  node $i $Ls 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 3 columns
+
+node 3 [expr 2.0*$Ls] 0.0 0.0 ;
+
+node 103 [expr 2.0*$Ls] 0.0 $H1 ;
+
+for {set i 203} {$i <= 3803} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 4 columns
+
+node 4 [expr 2.0*$Ls] $Bs 0.0 ;
+
+node 104 [expr 2.0*$Ls] $Bs $H1 ;
+
+for {set i 204} {$i <= 3804} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 5 columns
+
+node 5 [expr 3.0*$Ls] $Bs 0.0 ;
+
+node 105 [expr 3.0*$Ls] $Bs $H1 ;
+
+for {set i 205} {$i <= 3805} {incr i 100} {;
+
+  node $i [expr 3.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 6 columns
+
+node 6 [expr 4.0*$Ls] $Bs 0.0 ;
+
+node 106 [expr 4.0*$Ls] $Bs $H1 ;
+
+for {set i 206} {$i <= 3806} {incr i 100} {;
+
+  node $i [expr 4.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 7 columns
+
+node 7 [expr 5.0*$Ls] $Bs 0.0 ;
+
+node 107 [expr 5.0*$Ls] $Bs $H1 ;
+
+for {set i 207} {$i <= 3807} {incr i 100} {;
+
+  node $i [expr 5.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 8 columns
+
+node 8 [expr 6.0*$Ls] $Bs 0.0 ;
+
+node 108 [expr 6.0*$Ls] $Bs $H1 ;
+
+for {set i 208} {$i <= 3808} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 9 columns
+
+node 9 [expr 6.0*$Ls] 0.0 0.0 ;
+
+node 109 [expr 6.0*$Ls] 0.0 $H1 ;
+
+for {set i 209} {$i <= 3809} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 10 columns
+
+node 10 [expr 7.0*$Ls] 0.0 0.0 ;
+
+node 110 [expr 7.0*$Ls] 0.0 $H1 ;
+
+for {set i 210} {$i <= 3810} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 11 columns
+
+node 11 [expr 8.0*$Ls] 0.0 0.0 ;
+
+node 111 [expr 8.0*$Ls] 0.0 $H1 ;
+
+for {set i 211} {$i <= 3811} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] 0.0 [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 12 columns
+
+node 12 [expr 8.0*$Ls] $Bs 0.0 ;
+
+node 112 [expr 8.0*$Ls] $Bs $H1 ;
+
+for {set i 212} {$i <= 3812} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] $Bs [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 13 columns
+
+node 13 [expr 8.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 113 [expr 8.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 213} {$i <= 3813} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 14 columns
+
+node 14 [expr 8.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 114 [expr 8.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 214} {$i <= 3814} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 15 columns
+
+node 15 [expr 8.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 115 [expr 8.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 215} {$i <= 3815} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 16 columns
+
+node 16 [expr 8.0*$Ls] [expr 5.0*$Bs] 0.0 ;
+
+node 116 [expr 8.0*$Ls] [expr 5.0*$Bs] $H1 ;
+
+for {set i 216} {$i <= 3816} {incr i 100} {;
+
+  node $i [expr 8.0*$Ls] [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 17 columns
+
+node 17 [expr 7.0*$Ls] [expr 5.0*$Bs] 0.0 ;
+
+node 117 [expr 7.0*$Ls] [expr 5.0*$Bs] $H1 ;
+
+for {set i 217} {$i <= 3817} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 18 columns
+
+node 18 [expr 6.0*$Ls] [expr 5.0*$Bs] 0.0 ;
+
+node 118 [expr 6.0*$Ls] [expr 5.0*$Bs] $H1 ;
+
+for {set i 218} {$i <= 3818} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 19 columns
+
+node 19 [expr 6.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 119 [expr 6.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 219} {$i <= 3819} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 20 columns
+
+node 20 [expr 5.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 120 [expr 5.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 220} {$i <= 3820} {incr i 100} {;
+
+  node $i [expr 5.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 21 columns
+
+node 21 [expr 4.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 121 [expr 4.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 221} {$i <= 3821} {incr i 100} {;
+
+  node $i [expr 4.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 22 columns
+
+node 22 [expr 3.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 122 [expr 3.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 222} {$i <= 3822} {incr i 100} {;
+
+  node $i [expr 3.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 23 columns
+
+node 23 [expr 2.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 123 [expr 2.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 223} {$i <= 3823} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 24 columns
+
+node 24 [expr 2.0*$Ls] [expr 5.0*$Bs] 0.0 ;
+
+node 124 [expr 2.0*$Ls] [expr 5.0*$Bs] $H1 ;
+
+for {set i 224} {$i <= 3824} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 25 columns
+
+node 25 [expr 1.0*$Ls] [expr 5.0*$Bs] 0.0 ;
+
+node 125 [expr 1.0*$Ls] [expr 5.0*$Bs] $H1 ;
+
+for {set i 225} {$i <= 3825} {incr i 100} {;
+
+  node $i [expr 1.0*$Ls] [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 26 columns
+
+node 26 0.0 [expr 5.0*$Bs] 0.0 ;
+
+node 126 0.0 [expr 5.0*$Bs] $H1 ;
+
+for {set i 226} {$i <= 3826} {incr i 100} {;
+
+  node $i 0.0 [expr 5.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 27 columns
+
+node 27 0.0 [expr 4.0*$Bs] 0.0 ;
+
+node 127 0.0 [expr 4.0*$Bs] $H1 ;
+
+for {set i 227} {$i <= 3827} {incr i 100} {;
+
+  node $i 0.0 [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 28 columns
+
+node 28 0.0 [expr 3.0*$Bs] 0.0 ;
+
+node 128 0.0 [expr 3.0*$Bs] $H1 ;
+
+for {set i 228} {$i <= 3828} {incr i 100} {;
+
+  node $i 0.0 [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 29 columns
+
+node 29 0.0 [expr 2.0*$Bs] 0.0 ;
+
+node 129 0.0 [expr 2.0*$Bs] $H1 ;
+
+for {set i 229} {$i <= 3829} {incr i 100} {;
+
+  node $i 0.0 [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 30 columns
+
+node 30 0.0 [expr 1.0*$Bs] 0.0 ;
+
+node 130 0.0 [expr 1.0*$Bs] $H1 ;
+
+for {set i 230} {$i <= 3830} {incr i 100} {;
+
+  node $i 0.0 [expr 1.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 31 columns
+
+node 31 [expr 1.0*$Ls] [expr 1.0*$Bs] 0.0 ;
+
+node 131 [expr 1.0*$Ls] [expr 1.0*$Bs] $H1 ;
+
+for {set i 231} {$i <= 3831} {incr i 100} {;
+
+  node $i [expr 1.0*$Ls] [expr 1.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 32 columns
+
+node 32 [expr 1.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 132 [expr 1.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 232} {$i <= 3832} {incr i 100} {;
+
+  node $i [expr 1.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 33 columns
+
+node 33 [expr 1.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 133 [expr 1.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 233} {$i <= 3833} {incr i 100} {;
+
+  node $i [expr 1.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 34 columns
+
+node 34 [expr 1.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 134 [expr 1.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 234} {$i <= 3834} {incr i 100} {;
+
+  node $i [expr 1.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 35 columns
+
+node 35 [expr 2.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 135 [expr 2.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 235} {$i <= 3835} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 36 columns
+
+node 36 [expr 2.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 136 [expr 2.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 236} {$i <= 3836} {incr i 100} {;
+
+  node $i [expr 2.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 37 columns
+
+node 37 [expr 3.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 137 [expr 3.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 237} {$i <= 3837} {incr i 100} {;
+
+  node $i [expr 3.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 38 columns
+
+node 38 [expr 3.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 138 [expr 3.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 238} {$i <= 3838} {incr i 100} {;
+
+  node $i [expr 3.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 39 columns
+
+node 39 [expr 4.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 139 [expr 4.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 239} {$i <= 3839} {incr i 100} {;
+
+  node $i [expr 4.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 40 columns
+
+node 40 [expr 4.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 140 [expr 4.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 240} {$i <= 3840} {incr i 100} {;
+
+  node $i [expr 4.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 41 columns
+
+node 41 [expr 5.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 141 [expr 5.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 241} {$i <= 3841} {incr i 100} {;
+
+  node $i [expr 5.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 42 columns
+
+node 42 [expr 5.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 142 [expr 5.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 242} {$i <= 3842} {incr i 100} {;
+
+  node $i [expr 5.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 43 columns
+
+node 43 [expr 6.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 143 [expr 6.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 243} {$i <= 3843} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 44 columns
+
+node 44 [expr 6.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 144 [expr 6.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 244} {$i <= 3844} {incr i 100} {;
+
+  node $i [expr 6.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 45 columns
+
+node 45 [expr 7.0*$Ls] [expr 2.0*$Bs] 0.0 ;
+
+node 145 [expr 7.0*$Ls] [expr 2.0*$Bs] $H1 ;
+
+for {set i 245} {$i <= 3845} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] [expr 2.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 46 columns
+
+node 46 [expr 7.0*$Ls] [expr 3.0*$Bs] 0.0 ;
+
+node 146 [expr 7.0*$Ls] [expr 3.0*$Bs] $H1 ;
+
+for {set i 246} {$i <= 3846} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] [expr 3.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 47 columns
+
+node 47 [expr 7.0*$Ls] [expr 4.0*$Bs] 0.0 ;
+
+node 147 [expr 7.0*$Ls] [expr 4.0*$Bs] $H1 ;
+
+for {set i 247} {$i <= 3847} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] [expr 4.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+# node for number 48 columns
+
+node 48 [expr 7.0*$Ls] [expr 1.0*$Bs] 0.0 ;
+
+node 148 [expr 7.0*$Ls] [expr 1.0*$Bs] $H1 ;
+
+for {set i 248} {$i <= 3848} {incr i 100} {;
+
+  node $i [expr 7.0*$Ls] [expr 1.0*$Bs] [expr floor(($i-100.0)/100.0)*$H+$H1]
+
+};
+
+puts "end offf defining nodess" ;
+
+#recorder display "plan" 50 50 700 700 -wipe;
+#
+#vup 0 1 0;
+#
+#vpn 0 0 1;
+#
+#prp 0 0 100;
+#vrp 24 22.2 0.0;
+#display 1 4 10;
+#
+#after 20000000;
+#
+##############################################################
+
+
+puts "Determining the boundary conditions" ;
+
+puts "Defining boundary conditions" ;
+
+for {set i 1} {$i <= 48} {incr i 1} {;
+
+ fix $i 1 1 1 1 1 1
+
+};
+
+for {set i 150} {$i <= 3850} {incr i 100} {;
+
+ fix $i 0 0 1 1 1 0
+
+};
+
+
+puts "end of defining boundary conditions" ;
+
+##############################################################
+
+puts "Determining Diaphragms" ;
+
+puts "Defining diaphragms" ;
+
+for {set i 100} {$i <= 3800} {incr i 100} {;
+
+ rigidDiaphragm 3 [expr 50+$i] [expr 1+$i] [expr 2+$i] [expr 3+$i] [expr 4+$i] [expr 5+$i] [expr 6+$i] [expr 7+$i] [expr 8+$i] [expr 9+$i] [expr 10+$i] [expr 11+$i] [expr 12+$i] [expr 13+$i] [expr 14+$i] [expr 15+$i] [expr 16+$i] [expr 17+$i] [expr 18+$i] [expr 19+$i] [expr 20+$i] [expr 21+$i] [expr 22+$i] [expr 23+$i] [expr 24+$i] [expr 25+$i] [expr 26+$i] [expr 27+$i] [expr 28+$i] [expr 29+$i] [expr 30+$i] 
+
+};
+
+puts "end offff Determining Diaphragms" ;
+
+##############################################################
+puts "Defining materials" ;
+
+uniaxialMaterial Steel02 1 $FyAIII $Es $b $Ro $CR1 $CR2 ; 
+
+uniaxialMaterial Steel02 2 $FyAIV $Es $b $Ro $CR1 $CR2 ; 
+
+uniaxialMaterial Concrete02 3 $fc $epsc $fu $epsu $lambda $ft $Et ; 
+
+uniaxialMaterial Concrete02 4 $fcp $epscp $fup $epsup $lambda $ftp $Etp ; 
+
+uniaxialMaterial Concrete02 5 $fcc $epscc $fuc $epsuc $lambda $ftc $Etc ;
+
+uniaxialMaterial Concrete02 6 $fccc $epsccc $fucc $epsucc $lambda $ftcc $Etcc ;
+
+puts "end offf Defining materials" ;
+
+##############################################################
+
+puts "Defining column sections" ;
+
+#ordinary column section
+
+section Fiber 1 -GJ [expr $G*$J] {;
+
+ patch quad 5 6 8 -0.92 0.46 -0.92 0.23 0.92 0.23 0.92 0.46
+
+ patch quad 5 6 8 -0.92 0.23 -0.92 -0.23 -0.46 -0.23 -0.46 0.23
+
+ patch quad 6 6 8 -0.46 0.23 -0.46 -0.23 0.46 -0.23 0.46 0.23
+
+ patch quad 5 6 8 0.46 0.23 0.46 -0.23 0.92 -0.23 0.92 0.23
+
+ patch quad 5 6 8 -0.92 -0.23 -0.92 -0.46 0.92 -0.46 0.92 -0.23
+
+ layer straight 2 8 0.00102 -0.718 0.327 0.718 0.327
+
+ layer straight 2 8 0.00102 -0.754 0.291 0.7 0.291
+
+ layer straight 2 8 0.00102 -0.7 0.291 0.754 0.291
+
+ layer straight 2 8 0.00102 -0.718 -0.291 0.682 -0.291
+
+ layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327  
+
+ layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327  
+
+ layer straight 2 2 0.00102 -0.718 0.212 0.718 0.212
+
+ layer straight 2 2 0.00102 -0.754 0.176 0.7 0.176
+
+ layer straight 2 2 0.00102 -0.7 0.176 0.754 0.176
+
+ layer straight 2 2 0.00102 -0.718 0.115 0.718 0.115
+
+ layer straight 2 2 0.00102 -0.754 0.079 0.7 0.079
+
+ layer straight 2 2 0.00102 -0.7 0.079 0.754 0.079
+
+ layer straight 2 2 0.00102 -0.718 0.0 0.718 0.0
+
+ layer straight 2 2 0.00102 -0.754 -0.036 0.7 -0.036
+
+ layer straight 2 2 0.00102 -0.7 -0.036 0.754 -0.036
+
+ layer straight 2 2 0.00102 -0.718 -0.115 0.718 -0.115
+
+ layer straight 2 2 0.00102 -0.754 -0.151 0.7 -0.151
+
+ layer straight 2 2 0.00102 -0.7 -0.151 0.754 -0.151
+
+ layer straight 2 5 0.00102 -0.42 0.137 0.42 0.137
+
+ layer straight 2 5 0.00102 -0.42 0.101 0.42 0.101
+
+ layer straight 2 5 0.00102 -0.42 -0.101 0.42 -0.101
+
+ layer straight 2 5 0.00102 -0.42 -0.137 0.42 -0.137
+
+};
+
+section Fiber 2 -GJ [expr $G*$J] {;
+
+#column section rehabilitated with polymer concrete
+
+ patch quad 5 6 8 -0.92 0.46 -0.92 0.23 0.92 0.23 0.92 0.46
+
+ patch quad 5 6 8 -0.92 0.23 -0.92 -0.23 -0.46 -0.23 -0.46 0.23
+
+ patch quad 6 6 8 -0.46 0.23 -0.46 -0.23 0.46 -0.23 0.46 0.23
+
+ patch quad 5 6 8 0.46 0.23 0.46 -0.23 0.92 -0.23 0.92 0.23
+
+ patch quad 5 6 8 -0.92 -0.23 -0.92 -0.46 0.92 -0.46 0.92 -0.23
+
+ patch quad 4 6 8 -1.02 0.56 -1.02 0.46 1.02 0.46 1.02 0.56
+
+ patch quad 4 6 8 -1.02 -0.46 -1.02 -0.56 1.02 -0.56 1.02 -0.46
+
+ patch quad 4 6 8 -1.02 0.46 -1.02 -0.46 -0.92 -0.46 -0.92 0.46
+
+ patch quad 4 6 8 0.92 0.46 0.92 -0.46 1.02 -0.46 1.02 0.46
+
+ layer straight 2 8 0.00102 -0.718 0.327 0.718 0.327
+
+ layer straight 2 8 0.00102 -0.754 0.291 0.7 0.291
+
+ layer straight 2 8 0.00102 -0.7 0.291 0.754 0.291
+
+ layer straight 2 8 0.00102 -0.718 -0.291 0.682 -0.291
+
+ layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327   
+
+ layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327  
+
+ layer straight 2 2 0.00102 -0.718 0.212 0.718 0.212
+
+ layer straight 2 2 0.00102 -0.754 0.176 0.7 0.176
+
+ layer straight 2 2 0.00102 -0.7 0.176 0.754 0.176
+
+ layer straight 2 2 0.00102 -0.718 0.115 0.718 0.115
+
+ layer straight 2 2 0.00102 -0.754 0.079 0.7 0.079
+
+ layer straight 2 2 0.00102 -0.7 0.079 0.754 0.079
+
+ layer straight 2 2 0.00102 -0.718 0.0 0.718 0.0
+
+ layer straight 2 2 0.00102 -0.754 -0.036 0.7 -0.036
+
+ layer straight 2 2 0.00102 -0.7 -0.036 0.754 -0.036
+
+ layer straight 2 2 0.00102 -0.718 -0.115 0.718 -0.115
+
+ layer straight 2 2 0.00102 -0.754 -0.151 0.7 -0.151
+
+ layer straight 2 2 0.00102 -0.7 -0.151 0.754 -0.151
+
+ layer straight 2 5 0.00102 -0.42 0.137 0.42 0.137
+
+ layer straight 2 5 0.00102 -0.42 0.101 0.42 0.101
+
+ layer straight 2 5 0.00102 -0.42 -0.101 0.42 -0.101
+
+ layer straight 2 5 0.00102 -0.42 -0.137 0.42 -0.137
+
+};
+
+puts "Defining beam sections" ;
+
+section Fiber 3 -GJ [expr $G*$J] {;
+
+#Thick beam section
+
+ patch quad 5 6 8 -0.915 0.915 -0.915 -0.915 0.915 -0.915 0.915 0.915
+
+ layer straight 2 7 0.00102 0.8 -0.8 0.8 0.8
+
+ layer straight 2 7 0.00102 -0.8 -0.8 -0.8 0.8
+
+};
+
+section Fiber 4 -GJ [expr $G*$J] {;
+
+#thin beam section
+
+ patch quad 5 6 8 -0.915 0.46 -0.915 -0.46 0.915 -0.46 0.915 0.46
+
+ layer straight 2 7 0.00102 0.8 -0.3 0.8 0.3
+
+ layer straight 2 7 0.00102 -0.8 -0.3 -0.8 0.3
+
+};
+
+##################################################################
+
+puts "defining geometric transformation" ;
+
+#for horizontal beams
+
+geomTransf Linear 1 0 1 0 ;   
+
+#for vertical beams
+
+geomTransf Linear 2 1 0 0 ;  
+
+#for columns
+
+geomTransf PDelta 3 1 0 0 ; 
+
+puts "end of defining geometrictransformation" ;
+
+##################################################################
+
+puts "Defining columns" ;
+
+for {set i 1} {$i <= 3701} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 2} {$i <= 3702} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 3} {$i <= 3703} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 4} {$i <= 3704} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 5} {$i <= 3705} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 6} {$i <= 3706} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 7} {$i <= 3707} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 8} {$i <= 3708} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 9} {$i <= 3709} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 10} {$i <= 3710} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 11} {$i <= 3711} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 12} {$i <= 3712} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 13} {$i <= 3713} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 14} {$i <= 3714} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 15} {$i <= 3715} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 16} {$i <= 3716} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 17} {$i <= 3717} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 18} {$i <= 3718} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 19} {$i <= 3719} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 20} {$i <= 3720} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 21} {$i <= 3721} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 22} {$i <= 3722} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 23} {$i <= 3723} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 24} {$i <= 3724} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 25} {$i <= 3725} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 26} {$i <= 3726} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 27} {$i <= 3727} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 28} {$i <= 3728} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 29} {$i <= 3729} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 30} {$i <= 3730} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 31} {$i <= 3731} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 32} {$i <= 3732} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 33} {$i <= 3733} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 34} {$i <= 3734} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 35} {$i <= 3735} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 36} {$i <= 3736} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 37} {$i <= 3737} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 38} {$i <= 3738} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 39} {$i <= 3739} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 40} {$i <= 3740} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 41} {$i <= 3741} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 42} {$i <= 3742} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 43} {$i <= 3743} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 44} {$i <= 3744} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 45} {$i <= 3745} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+
+for {set i 46} {$i <= 3746} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 47} {$i <= 3747} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+for {set i 48} {$i <= 3748} {incr i 100} {;
+
+set j [expr $i+100]
+
+element dispBeamColumn $i $i $j 5 1 3 -mass $mc
+
+};
+
+puts "end of defining columns" ;
+
+###################################################
+
+puts "defining beams" ;
+
+for {set i 101} {$i <= 3801} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 102} {$i <= 3802} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 103} {$i <= 3803} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+
+for {set i 104} {$i <= 3804} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 105} {$i <= 3805} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 106} {$i <= 3806} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 107} {$i <= 3807} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 108} {$i <= 3808} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+
+for {set i 109} {$i <= 3809} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 110} {$i <= 3810} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 111} {$i <= 3811} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+
+for {set i 112} {$i <= 3812} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 113} {$i <= 3813} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 114} {$i <= 3814} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 115} {$i <= 3815} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 116} {$i <= 3816} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 117} {$i <= 3817} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 118} {$i <= 3818} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 119} {$i <= 3819} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 120} {$i <= 3820} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 121} {$i <= 3821} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 122} {$i <= 3822} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 123} {$i <= 3823} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 124} {$i <= 3824} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 125} {$i <= 3825} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+for {set i 126} {$i <= 3826} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+
+for {set i 127} {$i <= 3827} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 128} {$i <= 3828} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 129} {$i <= 3829} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 130} {$i <= 3830} {incr i 100} {;
+
+set j [expr $i-29]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+
+};
+
+for {set i 130} {$i <= 2530} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2630} {$i <= 3830} {incr i 100} {;
+
+set j [expr $i+1]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 131} {$i <= 2531} {incr i 100} {;
+
+set j [expr $i-27]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2631} {$i <= 3831} {incr i 100} {;
+
+set j [expr $i-27]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 108} {$i <= 2508} {incr i 100} {;
+
+set j [expr $i+40]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2608} {$i <= 3808} {incr i 100} {;
+
+set j [expr $i+40]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 148} {$i <= 2548} {incr i 100} {;
+
+set j [expr $i-36]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2648} {$i <= 3848} {incr i 100} {;
+
+set j [expr $i-36]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 129} {$i <= 2529} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2629} {$i <= 3829} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 132} {$i <= 2532} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2632} {$i <= 3832} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 135} {$i <= 2535} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2635} {$i <= 3835} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 137} {$i <= 2537} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2637} {$i <= 3837} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 139} {$i <= 2539} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2639} {$i <= 3839} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 141} {$i <= 2541} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2641} {$i <= 3841} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 143} {$i <= 2543} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2643} {$i <= 3843} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 145} {$i <= 2545} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2645} {$i <= 3845} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+
+for {set i 128} {$i <= 2528} {incr i 100} {;
+
+set j [expr $i+5]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2628} {$i <= 3828} {incr i 100} {;
+
+set j [expr $i+5]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 133} {$i <= 2533} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2633} {$i <= 3833} {incr i 100} {;
+
+set j [expr $i+3]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 136} {$i <= 2536} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2636} {$i <= 3836} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 138} {$i <= 2538} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2638} {$i <= 3838} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 140} {$i <= 2540} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2640} {$i <= 3840} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 142} {$i <= 2542} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2642} {$i <= 3842} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 144} {$i <= 2544} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2644} {$i <= 3844} {incr i 100} {;
+
+set j [expr $i+2]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 146} {$i <= 2546} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2646} {$i <= 3846} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 127} {$i <= 2527} {incr i 100} {;
+
+set j [expr $i+7]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2627} {$i <= 3827} {incr i 100} {;
+
+set j [expr $i+7]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 134} {$i <= 2534} {incr i 100} {;
+
+set j [expr $i-11]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2634} {$i <= 3834} {incr i 100} {;
+
+set j [expr $i-11]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 119} {$i <= 2519} {incr i 100} {;
+
+set j [expr $i+28]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2619} {$i <= 3819} {incr i 100} {;
+
+set j [expr $i+28]
+
+element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+for {set i 147} {$i <= 2547} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+
+};
+
+
+for {set i 2647} {$i <= 3847} {incr i 100} {;
+
+set j [expr $i-32]
+
+element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+
+};
+
+puts "end of defining beams" ;
+
+###########################################################
+
+puts "defining loads" ;
+
+#columns
+
+
+pattern Plain 1 Linear {;
+
+ eleLoad -ele 101 201 301 401 501 601 701 801 901 1001 1101 1201 1301 1401 1501 1601 1701 1801 1901 2001 2101 2201 2301 2401 2501 2601 2701\
+ 2801 2901 3001 3101 3201 3301 3401 3501 3601 3701 102 202 302 402 502 602 702 802 902 1002 1102 1202 1302 1402 1502 1602 1702\
+ 1802 1902 2002 2102 2202 2302 2402 2502 2602 2702 2802 2902 3002 3102 3202 3302 3402 3502 3602 3702 103 203 303 403 503 603 703\
+ 803 903 1003 1103 1203 1303 1403 1503 1603 1703 1803 1903 2003 2103 2203 2303 2403 2503 2603 2703 2803 2903 3003 3103 3203 3303\
+ 3403 3503 3603 3703 104 204 304 404 504 604 704 804 904 1004 1104 1204 1304 1404 1504 1604 1704 1804 1904 2004 2104 2204 2304\
+ 2404 2504 2604 2704 2804 2904 3004 3104 3204 3304 3404 3504 3604 3704 105 205 305 405 505 605 705 805 905 1005 1105 1205 1305\
+ 1405 1505 1605 1705 1805 1905 2005 2105 2205 2305 2405 2505 2605 2705 2805 2905 3005 3105 3205 3305 3405 3505 3605 3705 106 206\
+ 306 406 506 606 706 806 906 1006 1106 1206 1306 1406 1506 1606 1706 1806 1906 2006 2106 2206 2306 2406 2506 2606 2706 2806 2906\
+ 3006 3106 3206 3306 3406 3506 3606 3706 107 207 307 407 507 607 707 807 907 1007 1107 1207 1307 1407 1507 1607 1707 1807 1907\
+ 2007 2107 2207 2307 2407 2507 2607 2707 2807 2907 3007 3107 3207 3307 3407 3507 3607 3707 108 208 308 408 508 608 708 808 908\
+ 1008 1108 1208 1308 1408 1508 1608 1708 1808 1908 2008 2108 2208 2308 2408 2508 2608 2708 2808 2908 3008 3108 3208 3308 3408\
+ 3508 3608 3708 109 209 309 409 509 609 709 809 909 1009 1109 1209 1309 1409 1509 1609 1709 1809 1909 2009 2109 2209 2309 2409\
+ 2509 2609 2709 2809 2909 3009 3109 3209 3309 3409 3509 3609 3709 110 210 310 410 510 610 710 810 910 1010 1110 1210 1310 1410\
+ 1510 1610 1710 1810 1910 2010 2110 2210 2310 2410 2510 2610 2710 2810 2910 3010 3110 3210 3310 3410 3510 3610 3710 111 211 311\
+ 411 511 611 711 811 911 1011 1111 1211 1311 1411 1511 1611 1711 1811 1911 2011 2111 2211 2311 2411 2511 2611 2711 2811 2911\
+ 3011 3111 3211 3311 3411 3511 3611 3711 112 212 312 412 512 612 712 812 912 1012 1112 1212 1312 1412 1512 1612 1712 1812 1912\
+ 2012 2112 2212 2312 2412 2512 2612 2712 2812 2912 3012 3112 3212 3312 3412 3512 3612 3712 113 213 313 413 513 613 713 813 913\
+ 1013 1113 1213 1313 1413 1513 1613 1713 1813 1913 2013 2113 2213 2313 2413 2513 2613 2713 2813 2913 3013 3113 3213 3313 3413\
+ 3513 3613 3713 114 214 314 414 514 614 714 814 914 1014 1114 1214 1314 1414 1514 1614 1714 1814 1914 2014 2114 2214 2314 2414\
+ 2514 2614 2714 2814 2914 3014 3114 3214 3314 3414 3514 3614 3714 115 215 315 415 515 615 715 815 915 1015 1115 1215 1315 1415\
+ 1515 1615 1715 1815 1915 2015 2115 2215 2315 2415 2515 2615 2715 2815 2915 3015 3115 3215 3315 3415 3515 3615 3715 116 216 316\
+ 416 516 616 716 816 916 1016 1116 1216 1316 1416 1516 1616 1716 1816 1916 2016 2116 2216 2316 2416 2516 2616 2716 2816 2916\
+ 3016 3116 3216 3316 3416 3516 3616 3716 117 217 317 417 517 617 717 817 917 1017 1117 1217 1317 1417 1517 1617 1717 1817 1917\
+ 2017 2117 2217 2317 2417 2517 2617 2717 2817 2917 3017 3117 3217 3317 3417 3517 3617 3717 118 218 318 418 518 618 718 818 918\
+ 1018 1118 1218 1318 1418 1518 1618 1718 1818 1918 2018 2118 2218 2318 2418 2518 2618 2718 2818 2918 3018 3118 3218 3318 3418\
+ 3518 3618 3718 119 219 319 419 519 619 719 819 919 1019 1119 1219 1319 1419 1519 1619 1719 1819 1919 2019 2119 2219 2319 2419\
+ 2519 2619 2719 2819 2919 3019 3119 3219 3319 3419 3519 3619 3719 120 220 320 420 520 620 720 820 920 1020 1120 1220 1320 1420\
+ 1520 1620 1720 1820 1920 2020 2120 2220 2320 2420 2520 2620 2720 2820 2920 3020 3120 3220 3320 3420 3520 3620 3720 121 221 321\
+ 421 521 621 721 821 921 1021 1121 1221 1321 1421 1521 1621 1721 1821 1921 2021 2121 2221 2321 2421 2521 2621 2721 2821 2921\
+ 3021 3121 3221 3321 3421 3521 3621 3721 122 222 322 422 522 622 722 822 922 1022 1122 1222 1322 1422 1522 1622 1722 1822 1922\
+ 2022 2122 2222 2322 2422 2522 2622 2722 2822 2922 3022 3122 3222 3322 3422 3522 3622 3722 123 223 323 423 523 623 723 823 923\
+ 1023 1123 1223 1323 1423 1523 1623 1723 1823 1923 2023 2123 2223 2323 2423 2523 2623 2723 2823 2923 3023 3123 3223 3323 3423\
+ 3523 3623 3723 124 224 324 424 524 624 724 824 924 1024 1124 1224 1324 1424 1524 1624 1724 1824 1924 2024 2124 2224 2324 2424\
+ 2524 2624 2724 2824 2924 3024 3124 3224 3324 3424 3524 3624 3724 125 225 325 425 525 625 725 825 925 1025 1125 1225 1325 1425\
+ 1525 1625 1725 1825 1925 2025 2125 2225 2325 2425 2525 2625 2725 2825 2925 3025 3125 3225 3325 3425 3525 3625 3725 126 226 326\
+ 426 526 626 726 826 926 1026 1126 1226 1326 1426 1526 1626 1726 1826 1926 2026 2126 2226 2326 2426 2526 2626 2726 2826 2926 3026\
+ 3126 3226 3326 3426 3526 3626 3726 127 227 327 427 527 627 727 827 927 1027 1127 1227 1327 1427 1527 1627 1727 1827 1927 2027\
+ 2127 2227 2327 2427 2527 2627 2727 2827 2927 3027 3127 3227 3327 3427 3527 3627 3727 128 228 328 428 528 628 728 828 928 1028\
+ 1128 1228 1328 1428 1528 1628 1728 1828 1928 2028 2128 2228 2328 2428 2528 2628 2728 2828 2928 3028 3128 3228 3328 3428 3528\
+ 3628 3728 129 229 329 429 529 629 729 829 929 1029 1129 1229 1329 1429 1529 1629 1729 1829 1929 2029 2129 2229 2329 2429 2529\
+ 2629 2729 2829 2929 3029 3129 3229 3329 3429 3529 3629 3729 130 230 330 430 530 630 730 830 930 1030 1130 1230 1330 1430 1530\
+ 1630 1730 1830 1930 2030 2130 2230 2330 2430 2530 2630 2730 2830 2930 3030 3130 3230 3330 3430 3530 3630 3730 131 231 331 431\
+ 531 631 731 831 931 1031 1131 1231 1331 1431 1531 1631 1731 1831 1931 2031 2131 2231 2331 2431 2531 2631 2731 2831 2931 3031\
+ 3131 3231 3331 3431 3531 3631 3731 132 232 332 432 532 632 732 832 932 1032 1132 1232 1332 1432 1532 1632 1732 1832 1932 2032\
+ 2132 2232 2332 2432 2532 2632 2732 2832 2932 3032 3132 3232 3332 3432 3532 3632 3732 133 233 333 433 533 633 733 833 933 1033\
+ 1133 1233 1333 1433 1533 1633 1733 1833 1933 2033 2133 2233 2333 2433 2533 2633 2733 2833 2933 3033 3133 3233 3333 3433 3533\
+ 3633 3733 134 234 334 434 534 634 734 834 934 1034 1134 1234 1334 1434 1534 1634 1734 1834 1934 2034 2134 2234 2334 2434 2534\
+ 2634 2734 2834 2934 3034 3134 3234 3334 3434 3534 3634 3734 135 235 335 435 535 635 735 835 935 1035 1135 1235 1335 1435 1535\
+ 1635 1735 1835 1935 2035 2135 2235 2335 2435 2535 2635 2735 2835 2935 3035 3135 3235 3335 3435 3535 3635 3735 136 236 336 436\
+ 536 636 736 836 936 1036 1136 1236 1336 1436 1536 1636 1736 1836 1936 2036 2136 2236 2336 2436 2536 2636 2736 2836 2936 3036\
+ 3136 3236 3336 3436 3536 3636 3736 137 237 337 437 537 637 737 837 937 1037 1137 1237 1337 1437 1537 1637 1737 1837 1937 2037\
+ 2137 2237 2337 2437 2537 2637 2737 2837 2937 3037 3137 3237 3337 3437 3537 3637 3737 138 238 338 438 538 638 738 838 938 1038\
+ 1138 1238 1338 1438 1538 1638 1738 1838 1938 2038 2138 2238 2338 2438 2538 2638 2738 2838 2938 3038 3138 3238 3338 3438 3538\
+ 3638 3738 139 239 339 439 539 639 739 839 939 1039 1139 1239 1339 1439 1539 1639 1739 1839 1939 2039 2139 2239 2339 2439 2539\
+ 2639 2739 2839 2939 3039 3139 3239 3339 3439 3539 3639 3739 140 240 340 440 540 640 740 840 940 1040 1140 1240 1340 1440 1540\
+ 1640 1740 1840 1940 2040 2140 2240 2340 2440 2540 2640 2740 2840 2940 3040 3140 3240 3340 3440 3540 3640 3740 141 241 341 441\
+ 541 641 741 841 941 1041 1141 1241 1341 1441 1541 1641 1741 1841 1941 2041 2141 2241 2341 2441 2541 2641 2741 2841 2941 3041\
+ 3141 3241 3341 3441 3541 3641 3741 142 242 342 442 542 642 742 842 942 1042 1142 1242 1342 1442 1542 1642 1742 1842 1942 2042\
+ 2142 2242 2342 2442 2542 2642 2742 2842 2942 3042 3142 3242 3342 3442 3542 3642 3742 143 243 343 443 543 643 743 843 943 1043\
+ 1143 1243 1343 1443 1543 1643 1743 1843 1943 2043 2143 2243 2343 2443 2543 2643 2743 2843 2943 3043 3143 3243 3343 3443 3543\
+ 3643 3743 144 244 344 444 544 644 744 844 944 1044 1144 1244 1344 1444 1544 1644 1744 1844 1944 2044 2144 2244 2344 2444 2544\
+ 2644 2744 2844 2944 3044 3144 3244 3344 3444 3544 3644 3744 145 245 345 445 545 645 745 845 945 1045 1145 1245 1345 1445 1545\
+ 1645 1745 1845 1945 2045 2145 2245 2345 2445 2545 2645 2745 2845 2945 3045 3145 3245 3345 3445 3545 3645 3745 146 246 346 446\
+ 546 646 746 846 946 1046 1146 1246 1346 1446 1546 1646 1746 1846 1946 2046 2146 2246 2346 2446 2546 2646 2746 2846 2946 3046\
+ 3146 3246 3346 3446 3546 3646 3746 147 247 347 447 547 647 747 847 947 1047 1147 1247 1347 1447 1547 1647 1747 1847 1947 2047\
+ 2147 2247 2347 2447 2547 2647 2747 2847 2947 3047 3147 3247 3347 3447 3547 3647 3747 148 248 348 448 548 648 748 848 948 1048\
+ 1148 1248 1348 1448 1548 1648 1748 1848 1948 2048 2148 2248 2348 2448 2548 2648 2748 2848 2948 3048 3148 3248 3348 3448 3548 3648 3748 -type -beamUniform 0.0 -$wxc 0.0
+
+ 
+
+ eleLoad -ele 50101 50201 50301 50401 50501 50601 50701 50801 50901 51001 51101 51201 51301 51401 51501 51601 51701 51801 51901 52001 52101 52201 52301 52401 52501\
+ 52601 52701 52801 52901 53001 53101 53201 53301 53401 53501 53601 53701 53801 50102 50202 50302 50402 50502 50602 50702 50802 50902 51002 51102 51202\
+ 51302 51402 51502 51602 51702 51802 51902 52002 52102 52202 52302 52402 52502 52602 52702 52802 52902 53002 53102 53202 53302 53402 53502 53602 53702\
+ 53802 50103 50203 50303 50403 50503 50603 50703 50803 50903 51003 51103 51203 51303 51403 51503 51603 51703 51803 51903 52003 52103 52203 52303 52403\
+ 52503 52603 52703 52803 52903 53003 53103 53203 53303 53403 53503 53603 53703 53803 50104 50204 50304 50404 50504 50604 50704 50804 50904 51004 51104\
+ 51204 51304 51404 51504 51604 51704 51804 51904 52004 52104 52204 52304 52404 52504 52604 52704 52804 52904 53004 53104 53204 53304 53404 53504 53604\
+ 53704 53804 50105 50205 50305 50405 50505 50605 50705 50805 50905 51005 51105 51205 51305 51405 51505 51605 51705 51805 51905 52005 52105 52205 52305\
+ 52405 52505 52605 52705 52805 52905 53005 53105 53205 53305 53405 53505 53605 53705 53805 50106 50206 50306 50406 50506 50606 50706 50806 50906 51006\
+ 51106 51206 51306 51406 51506 51606 51706 51806 51906 52006 52106 52206 52306 52406 52506 52606 52706 52806 52906 53006 53106 53206 53306 53406 53506\
+ 53606 53706 53806 50107 50207 50307 50407 50507 50607 50707 50807 50907 51007 51107 51207 51307 51407 51507 51607 51707 51807 51907 52007 52107 52207\
+ 52307 52407 52507 52607 52707 52807 52907 53007 53107 53207 53307 53407 53507 53607 53707 53807 50108 50208 50308 50408 50508 50608 50708 50808 50908\
+ 51008 51108 51208 51308 51408 51508 51608 51708 51808 51908 52008 52108 52208 52308 52408 52508 52608 52708 52808 52908 53008 53108 53208 53308 53408\
+ 53508 53608 53708 53808 50109 50209 50309 50409 50509 50609 50709 50809 50909 51009 51109 51209 51309 51409 51509 51609 51709 51809 51909 52009 52109\
+ 52209 52309 52409 52509 52609 52709 52809 52909 53009 53109 53209 53309 53409 53509 53609 53709 53809 50110 50210 50310 50410 50510 50610 50710 50810\
+ 50910 51010 51110 51210 51310 51410 51510 51610 51710 51810 51910 52010 52110 52210 52310 52410 52510 52610 52710 52810 52910 53010 53110 53210 53310\
+ 53410 53510 53610 53710 53810 50111 50211 50311 50411 50511 50611 50711 50811 50911 51011 51111 51211 51311 51411 51511 51611 51711 51811 51911 52011\
+ 52111 52211 52311 52411 52511 52611 52711 52811 52911 53011 53111 53211 53311 53411 53511 53611 53711 53811 50112 50212 50312 50412 50512 50612 50712\
+ 50812 50912 51012 51112 51212 51312 51412 51512 51612 51712 51812 51912 52012 52112 52212 52312 52412 52512 52612 52712 52812 52912 53012 53112 53212\
+ 53312 53412 53512 53612 53712 53812 50113 50213 50313 50413 50513 50613 50713 50813 50913 51013 51113 51213 51313 51413 51513 51613 51713 51813 51913\
+ 52013 52113 52213 52313 52413 52513 52613 52713 52813 52913 53013 53113 53213 53313 53413 53513 53613 53713 53813 50114 50214 50314 50414 50514 50614\
+ 50714 50814 50914 51014 51114 51214 51314 51414 51514 51614 51714 51814 51914 52014 52114 52214 52314 52414 52514 52614 52714 52814 52914 53014 53114\
+ 53214 53314 53414 53514 53614 53714 53814 50115 50215 50315 50415 50515 50615 50715 50815 50915 51015 51115 51215 51315 51415 51515 51615 51715 51815\
+ 51915 52015 52115 52215 52315 52415 52515 52615 52715 52815 52915 53015 53115 53215 53315 53415 53515 53615 53715 53815 50116 50216 50316 50416 50516\
+ 50616 50716 50816 50916 51016 51116 51216 51316 51416 51516 51616 51716 51816 51916 52016 52116 52216 52316 52416 52516 52616 52716 52816 52916 53016\
+ 53116 53216 53316 53416 53516 53616 53716 53816 50117 50217 50317 50417 50517 50617 50717 50817 50917 51017 51117 51217 51317 51417 51517 51617 51717\
+ 51817 51917 52017 52117 52217 52317 52417 52517 52617 52717 52817 52917 53017 53117 53217 53317 53417 53517 53617 53717 53817 50118 50218 50318 50418\
+ 50518 50618 50718 50818 50918 51018 51118 51218 51318 51418 51518 51618 51718 51818 51918 52018 52118 52218 52318 52418 52518 52618 52718 52818 52918\
+ 53018 53118 53218 53318 53418 53518 53618 53718 53818 50119 50219 50319 50419 50519 50619 50719 50819 50919 51019 51119 51219 51319 51419 51519 51619\
+ 51719 51819 51919 52019 52119 52219 52319 52419 52519 52619 52719 52819 52919 53019 53119 53219 53319 53419 53519 53619 53719 53819 50120 50220 50320\
+ 50420 50520 50620 50720 50820 50920 51020 51120 51220 51320 51420 51520 51620 51720 51820 51920 52020 52120 52220 52320 52420 52520 52620 52720 52820\
+ 52920 53020 53120 53220 53320 53420 53520 53620 53720 53820 50121 50221 50321 50421 50521 50621 50721 50821 50921 51021 51121 51221 51321 51421 51521\
+ 51621 51721 51821 51921 52021 52121 52221 52321 52421 52521 52621 52721 52821 52921 53021 53121 53221 53321 53421 53521 53621 53721 53821 50122 50222\
+ 50322 50422 50522 50622 50722 50822 50922 51022 51122 51222 51322 51422 51522 51622 51722 51822 51922 52022 52122 52222 52322 52422 52522 52622 52722\
+ 52822 52922 53022 53122 53222 53322 53422 53522 53622 53722 53822 50123 50223 50323 50423 50523 50623 50723 50823 50923 51023 51123 51223 51323 51423\
+ 51523 51623 51723 51823 51923 52023 52123 52223 52323 52423 52523 52623 52723 52823 52923 53023 53123 53223 53323 53423 53523 53623 53723 53823 50124\
+ 50224 50324 50424 50524 50624 50724 50824 50924 51024 51124 51224 51324 51424 51524 51624 51724 51824 51924 52024 52124 52224 52324 52424 52524 52624\
+ 52724 52824 52924 53024 53124 53224 53324 53424 53524 53624 53724 53824 50125 50225 50325 50425 50525 50625 50725 50825 50925 51025 51125 51225 51325\
+ 51425 51525 51625 51725 51825 51925 52025 52125 52225 52325 52425 52525 52625 52725 52825 52925 53025 53125 53225 53325 53425 53525 53625 53725 53825\
+ 50126 50226 50326 50426 50526 50626 50726 50826 50926 51026 51126 51226 51326 51426 51526 51626 51726 51826 51926 52026 52126 52226 52326 52426 52526\
+ 52626 52726 52826 52926 53026 53126 53226 53326 53426 53526 53626 53726 53826 50127 50227 50327 50427 50527 50627 50727 50827 50927 51027 51127 51227\
+ 51327 51427 51527 51627 51727 51827 51927 52027 52127 52227 52327 52427 52527 52627 52727 52827 52927 53027 53127 53227 53327 53427 53527 53627 53727\
+ 53827 50128 50228 50328 50428 50528 50628 50728 50828 50928 51028 51128 51228 51328 51428 51528 51628 51728 51828 51928 52028 52128 52228 52328 52428\
+ 52528 52628 52728 52828 52928 53028 53128 53228 53328 53428 53528 53628 53728 53828 50129 50229 50329 50429 50529 50629 50729 50829 50929 51029 51129\
+ 51229 51329 51429 51529 51629 51729 51829 51929 52029 52129 52229 52329 52429 52529 52629 52729 52829 52929 53029 53129 53229 53329 53429 53529 53629\
+ 53729 53829 50130 50230 50330 50430 50530 50630 50730 50830 50930 51030 51130 51230 51330 51430 51530 51630 51730 51830 51930 52030 52130 52230 52330\
+ 52430 52530 52630 52730 52830 52930 53030 53130 53230 53330 53430 53530 53630 53730 53830 -type -beamUniform -$wysb 0.0 0.0
+     
+
+#inner beams   
+
+
+ eleLoad -ele 50131 50231 50331 50431 50531 50631 50731 50831 50931 51031 51131 51231 51331 51431 51531 51631 51731 51831 51931 52031 52131\
+ 52231 52331 52431 52531 50132 50232 50332 50432 50532 50632 50732 50832 50932 51032 51132 51232 51332 51432 51532 51632 51732\
+ 51832 51932 52032 52132 52232 52332 52432 52532 50133 50233 50333 50433 50533 50633 50733 50833 50933 51033 51133 51233 51333\
+ 51433 51533 51633 51733 51833 51933 52033 52133 52233 52333 52433 52533 50134 50234 50334 50434 50534 50634 50734 50834 50934\
+ 51034 51134 51234 51334 51434 51534 51634 51734 51834 51934 52034 52134 52234 52334 52434 52534 50135 50235 50335 50435 50535\
+ 50635 50735 50835 50935 51035 51135 51235 51335 51435 51535 51635 51735 51835 51935 52035 52135 52235 52335 52435 52535 50136\
+ 50236 50336 50436 50536 50636 50736 50836 50936 51036 51136 51236 51336 51436 51536 51636 51736 51836 51936 52036 52136 52236\
+ 52336 52436 52536 50137 50237 50337 50437 50537 50637 50737 50837 50937 51037 51137 51237 51337 51437 51537 51637 51737 51837\
+ 51937 52037 52137 52237 52337 52437 52537 50138 50238 50338 50438 50538 50638 50738 50838 50938 51038 51138 51238 51338 51438\
+ 51538 51638 51738 51838 51938 52038 52138 52238 52338 52438 52538 50139 50239 50339 50439 50539 50639 50739 50839 50939 51039\
+ 51139 51239 51339 51439 51539 51639 51739 51839 51939 52039 52139 52239 52339 52439 52539 50140 50240 50340 50440 50540 50640\
+ 50740 50840 50940 51040 51140 51240 51340 51440 51540 51640 51740 51840 51940 52040 52140 52240 52340 52440 52540 50141 50241\
+ 50341 50441 50541 50641 50741 50841 50941 51041 51141 51241 51341 51441 51541 51641 51741 51841 51941 52041 52141 52241 52341\
+ 52441 52541 50142 50242 50342 50442 50542 50642 50742 50842 50942 51042 51142 51242 51342 51442 51542 51642 51742 51842 51942\
+ 52042 52142 52242 52342 52442 52542 50143 50243 50343 50443 50543 50643 50743 50843 50943 51043 51143 51243 51343 51443 51543\
+ 51643 51743 51843 51943 52043 52143 52243 52343 52443 52543 50144 50244 50344 50444 50544 50644 50744 50844 50944 51044 51144\
+ 51244 51344 51444 51544 51644 51744 51844 51944 52044 52144 52244 52344 52444 52544 50145 50245 50345 50445 50545 50645 50745\
+ 50845 50945 51045 51145 51245 51345 51445 51545 51645 51745 51845 51945 52045 52145 52245 52345 52445 52545 50146 50246 50346\
+ 50446 50546 50646 50746 50846 50946 51046 51146 51246 51346 51446 51546 51646 51746 51846 51946 52046 52146 52246 52346 52446\
+ 52546 50147 50247 50347 50447 50547 50647 50747 50847 50947 51047 51147 51247 51347 51447 51547 51647 51747 51847 51947 52047\
+ 52147 52247 52347 52447 52547 50148 50248 50348 50448 50548 50648 50748 50848 50948 51048 51148 51248 51348 51448 51548 51648\
+ 51748 51848 51948 52048 52148 52248 52348 52448 52548 -type -beamUniform -$wyb 0.0 0.0
+
+
+ eleLoad -ele 52631 52731 52831 52931 53031 53131 53231 53331 53431 53531 53631 53731 53831 52632 52732 52832 52932 53032 53132 53232 53332 53432\
+ 53532 53632 53732 53832 52633 52733 52833 52933 53033 53133 53233 53333 53433 53533 53633 53733 53833 52634 52734 52834 52934 53034\
+ 53134 53234 53334 53434 53534 53634 53734 53834 52635 52735 52835 52935 53035 53135 53235 53335 53435 53535 53635 53735 53835 52636\
+ 52736 52836 52936 53036 53136 53236 53336 53436 53536 53636 53736 53836 52637 52737 52837 52937 53037 53137 53237 53337 53437 53537\
+ 53637 53737 53837 52638 52738 52838 52938 53038 53138 53238 53338 53438 53538 53638 53738 53838 52639 52739 52839 52939 53039 53139\
+ 53239 53339 53439 53539 53639 53739 53839 52640 52740 52840 52940 53040 53140 53240 53340 53440 53540 53640 53740 53840 52641 52741\
+ 52841 52941 53041 53141 53241 53341 53441 53541 53641 53741 53841 52642 52742 52842 52942 53042 53142 53242 53342 53442 53542 53642\
+ 53742 53842 52643 52743 52843 52943 53043 53143 53243 53343 53443 53543 53643 53743 53843 52644 52744 52844 52944 53044 53144 53244\
+ 53344 53444 53544 53644 53744 53844 52645 52745 52845 52945 53045 53145 53245 53345 53445 53545 53645 53745 53845 52646 52746 52846\
+ 52946 53046 53146 53246 53346 53446 53546 53646 53746 53846 52647 52747 52847 52947 53047 53147 53247 53347 53447 53547 53647 53747\
+ 53847 52648 52748 52848 52948 53048 53148 53248 53348 53448 53548 53648 53748 53848 -type -beamUniform -$wybb 0.0 0.0
+
+ eleLoad -ele 60127 60227 60327 60427 60527 60627 60727 60827 60927 61027 61127 61227 61327 61427 61527 61627 61727 61827 61927 62027 62127\
+ 62227 62327 62427 62527 60128 60228 60328 60428 60528 60628 60728 60828 60928 61028 61128 61228 61328 61428 61528 61628 61728\
+ 61828 61928 62028 62128 62228 62328 62428 62528 60129 60229 60329 60429 60529 60629 60729 60829 60929 61029 61129 61229 61329\
+ 61429 61529 61629 61729 61829 61929 62029 62129 62229 62329 62429 62529 60130 60230 60330 60430 60530 60630 60730 60830 60930\
+ 61030 61130 61230 61330 61430 61530 61630 61730 61830 61930 62030 62130 62230 62330 62430 62530 -type -beamUniform -$wyb 0.0 0.0
+
+ eleLoad -ele 62627 62727 62827 62927 63027 63127 63227 63327 63427 63527 63627 63727 63827 62628 62728 62828 62928 63028 63128 63228 63328\
+ 63428 63528 63628 63728 63828 62629 62729 62829 62929 63029 63129 63229 63329 63429 63529 63629 63729 63829 62630 62730 62830\
+ 62930 63030 63130 63230 63330 63430 63530 63630 63730 63830 -type -beamUniform -$wybb 0.0 0.0
+
+ eleLoad -ele 60108 60208 60308 60408 60508 60608 60708 60808 60908 61008 61108 61208 61308 61408 61508 61608 61708 61808\
+ 61908 62008 62108 62208 62308 62408 62508 -type -beamUniform -$wyb 0.0 0.0
+
+ eleLoad -ele 62608 62708 62808 62908 63008 63108 63208 63308 63408 63508 63608 63708 63808 -type -beamUniform -$wybb 0.0 0.0
+
+ eleLoad -ele 60119 60219 60319 60419 60519 60619 60719 60819 60919 61019 61119 61219 61319 61419 61519 61619 61719 61819\
+ 61919 62019 62119 62219 62319 62419 62519 -type -beamUniform -$wyb 0.0 0.0
+
+ eleLoad -ele 62619 62719 62819 62919 63019 63119 63219 63319 63419 63519 63619 63719 63819 -type -beamUniform -$wybb 0.0 0.0
+
+
+};
+
+puts "end of defining loads" ;
+##########################################################
+
+# Static Analysis
+wipeAnalysis ;	                                                            
+constraints Transformation ;                                                                     
+numberer RCM ;                                                                                      
+system SparseGeneral ;                                                        
+test EnergyIncr 1e-4 25 0 ;
+algorithm ModifiedNewton ;	                                                         	
+integrator LoadControl 0.01 ;                                                 
+analysis Static ;  
+analyze 100 ; 
+loadConst -time 0.0
+                                                                
+puts "End of Static Analysis"
+
+########################################################
