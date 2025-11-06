@@ -1,4 +1,4 @@
-#Case study tall buildings
+#Project of tall buildings
 
 #kianoush ajir
 
@@ -88,17 +88,17 @@ set Wc 0.9 ;
 
 #define Area load
 
-set LL 4000.0 ;   
+set LL 4000.0 ;   ########################
 
-set DL 4400.0 ;   
+set DL 4400.0 ;   ########################
 
 #defining extensive loads
 
-set wyb [expr (($DL+$LL)*$Ls)+($rho*$Ab)]; 
+set wyb [expr (($DL+$LL)*$Ls)+($rho*$Ab)]; #####################
 
 set wysb [expr ((($DL+$LL)*$Ls)+($rho*$Ab))/2.0]
 
-set wybb [expr (($DL+$LL)*$Ls)+($rho*$Abb)]; 
+set wybb [expr (($DL+$LL)*$Ls)+($rho*$Abb)]; ######################
 
 set wxc [expr $rho*$Ac] ; 
 
@@ -108,9 +108,9 @@ puts "Defining material properties" ;
 
 #setting properties of steel
 
-set FyAIV 517100000.0 ;   
+set FyAIV 517100000.0 ;   ###################
 
-set FyAIII 413700000.0 ;  
+set FyAIII 413700000.0 ;  ###################
 
 set Es 210000000000.0 ;
 
@@ -139,11 +139,6 @@ set ft 5180000.0 ;
 set Et 3.569e+9 ;
 
 set epst 0.000129 ;
-
-set J 1.53;
-
-set G [expr $Et/2.4];
-
 
 #setting properties of one time confined concrete
 
@@ -197,11 +192,11 @@ puts "Defining masses" ;
 
 #mass of horizontal beams from 1st to 25th floor
 
-set mbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Ab/$g)];
+set mbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Ab/$g)] ;###########################
 
 #mass of horizontal beams from 25th to the last floor
 
-set mbbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Abb/$g)];
+set mbbh [expr (($DL+(0.2*$LL))*($Ls/$g))+($rho*$Abb/$g)] ;####################
 
 #mass of vertical beams
 
@@ -865,13 +860,13 @@ puts "end offff Determining Diaphragms" ;
 ##############################################################
 puts "Defining materials" ;
 
-uniaxialMaterial Steel02 1 $FyAIII $Es $b $Ro $CR1 $CR2 ; 
+uniaxialMaterial Steel02 1 $FyAIII $Es $b $Ro $CR1 $CR2 ; #############################
 
-uniaxialMaterial Steel02 2 $FyAIV $Es $b $Ro $CR1 $CR2 ; 
+uniaxialMaterial Steel02 2 $FyAIV $Es $b $Ro $CR1 $CR2 ; ###############################
 
-uniaxialMaterial Concrete02 3 $fc $epsc $fu $epsu $lambda $ft $Et ; 
+uniaxialMaterial Concrete02 3 $fc $epsc $fu $epsu $lambda $ft $Et ; ####################
 
-uniaxialMaterial Concrete02 4 $fcp $epscp $fup $epsup $lambda $ftp $Etp ; 
+uniaxialMaterial Concrete02 4 $fcp $epscp $fup $epsup $lambda $ftp $Etp ; ###################
 
 uniaxialMaterial Concrete02 5 $fcc $epscc $fuc $epsuc $lambda $ftc $Etc ;
 
@@ -885,7 +880,7 @@ puts "Defining column sections" ;
 
 #ordinary column section
 
-section Fiber 1 -GJ [expr $G*$J] {;
+section Fiber 1 {;
 
  patch quad 5 6 8 -0.92 0.46 -0.92 0.23 0.92 0.23 0.92 0.46
 
@@ -905,9 +900,9 @@ section Fiber 1 -GJ [expr $G*$J] {;
 
  layer straight 2 8 0.00102 -0.718 -0.291 0.682 -0.291
 
- layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327  
+ layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327  #########################
 
- layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327  
+ layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327  ##########################
 
  layer straight 2 2 0.00102 -0.718 0.212 0.718 0.212
 
@@ -943,7 +938,7 @@ section Fiber 1 -GJ [expr $G*$J] {;
 
 };
 
-section Fiber 2 -GJ [expr $G*$J] {;
+section Fiber 2 {;
 
 #column section rehabilitated with polymer concrete
 
@@ -973,9 +968,9 @@ section Fiber 2 -GJ [expr $G*$J] {;
 
  layer straight 2 8 0.00102 -0.718 -0.291 0.682 -0.291
 
- layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327   
+ layer straight 2 8 0.00102 -0.754 -0.327 0.7 -0.327   ########################
 
- layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327  
+ layer straight 2 8 0.00102 -0.7 -0.327 0.754 -0.327   #########################
 
  layer straight 2 2 0.00102 -0.718 0.212 0.718 0.212
 
@@ -1013,7 +1008,7 @@ section Fiber 2 -GJ [expr $G*$J] {;
 
 puts "Defining beam sections" ;
 
-section Fiber 3 -GJ [expr $G*$J] {;
+section Fiber 3 {;
 
 #Thick beam section
 
@@ -1025,7 +1020,7 @@ section Fiber 3 -GJ [expr $G*$J] {;
 
 };
 
-section Fiber 4 -GJ [expr $G*$J] {;
+section Fiber 4 {;
 
 #thin beam section
 
@@ -1041,19 +1036,28 @@ section Fiber 4 -GJ [expr $G*$J] {;
 
 puts "defining geometric transformation" ;
 
-#for horizontal beams
+#for horizontal beams from right to left
 
 geomTransf Linear 1 0 1 0 ;   
 
-#for vertical beams
+#for vertical beams from downwards to upwards
 
-geomTransf Linear 2 1 0 0 ;  
+geomTransf Linear 2 1 0 0 ;   
 
 #for columns
 
-geomTransf PDelta 3 1 0 0 ; 
+geomTransf PDelta 3 1 0 0 ;   
+
+#for horizontal beams from left to right
+
+geomTransf Linear 4 0 -1 0 ;
+
+#for vertical beams from upwards to downwards
+
+geomTransf Linear 5 -1 0 0 ;
 
 puts "end of defining geometrictransformation" ;
+
 
 ##################################################################
 
@@ -1489,7 +1493,7 @@ for {set i 101} {$i <= 3801} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1497,7 +1501,7 @@ for {set i 102} {$i <= 3802} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1515,7 +1519,7 @@ for {set i 104} {$i <= 3804} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1524,7 +1528,7 @@ for {set i 105} {$i <= 3805} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1533,7 +1537,7 @@ for {set i 106} {$i <= 3806} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1542,7 +1546,7 @@ for {set i 107} {$i <= 3807} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1551,7 +1555,7 @@ for {set i 108} {$i <= 3808} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1560,7 +1564,7 @@ for {set i 109} {$i <= 3809} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1569,7 +1573,7 @@ for {set i 110} {$i <= 3810} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1635,7 +1639,7 @@ for {set i 118} {$i <= 3818} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1699,7 +1703,7 @@ for {set i 126} {$i <= 3826} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1708,7 +1712,7 @@ for {set i 127} {$i <= 3827} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1716,7 +1720,7 @@ for {set i 128} {$i <= 3828} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1724,7 +1728,7 @@ for {set i 129} {$i <= 3829} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1732,7 +1736,7 @@ for {set i 130} {$i <= 3830} {incr i 100} {;
 
 set j [expr $i-29]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 2 -mass $mbv
+element dispBeamColumn [expr $i+50000] $i $j 5 3 5 -mass $mbv
 
 };
 
@@ -1740,7 +1744,7 @@ for {set i 130} {$i <= 2530} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1749,7 +1753,7 @@ for {set i 2630} {$i <= 3830} {incr i 100} {;
 
 set j [expr $i+1]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1757,7 +1761,7 @@ for {set i 131} {$i <= 2531} {incr i 100} {;
 
 set j [expr $i-27]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1766,7 +1770,7 @@ for {set i 2631} {$i <= 3831} {incr i 100} {;
 
 set j [expr $i-27]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1774,7 +1778,7 @@ for {set i 108} {$i <= 2508} {incr i 100} {;
 
 set j [expr $i+40]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1783,7 +1787,7 @@ for {set i 2608} {$i <= 3808} {incr i 100} {;
 
 set j [expr $i+40]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1792,7 +1796,7 @@ for {set i 148} {$i <= 2548} {incr i 100} {;
 
 set j [expr $i-36]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1801,7 +1805,7 @@ for {set i 2648} {$i <= 3848} {incr i 100} {;
 
 set j [expr $i-36]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1810,7 +1814,7 @@ for {set i 129} {$i <= 2529} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1819,7 +1823,7 @@ for {set i 2629} {$i <= 3829} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1828,7 +1832,7 @@ for {set i 132} {$i <= 2532} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1837,7 +1841,7 @@ for {set i 2632} {$i <= 3832} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1846,7 +1850,7 @@ for {set i 135} {$i <= 2535} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1855,7 +1859,7 @@ for {set i 2635} {$i <= 3835} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1864,7 +1868,7 @@ for {set i 137} {$i <= 2537} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1873,7 +1877,7 @@ for {set i 2637} {$i <= 3837} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1882,7 +1886,7 @@ for {set i 139} {$i <= 2539} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1891,7 +1895,7 @@ for {set i 2639} {$i <= 3839} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1900,7 +1904,7 @@ for {set i 141} {$i <= 2541} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1909,7 +1913,7 @@ for {set i 2641} {$i <= 3841} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1918,7 +1922,7 @@ for {set i 143} {$i <= 2543} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1927,7 +1931,7 @@ for {set i 2643} {$i <= 3843} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1936,7 +1940,7 @@ for {set i 145} {$i <= 2545} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1945,7 +1949,7 @@ for {set i 2645} {$i <= 3845} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1954,7 +1958,7 @@ for {set i 128} {$i <= 2528} {incr i 100} {;
 
 set j [expr $i+5]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1963,7 +1967,7 @@ for {set i 2628} {$i <= 3828} {incr i 100} {;
 
 set j [expr $i+5]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1971,7 +1975,7 @@ for {set i 133} {$i <= 2533} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1980,7 +1984,7 @@ for {set i 2633} {$i <= 3833} {incr i 100} {;
 
 set j [expr $i+3]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -1988,7 +1992,7 @@ for {set i 136} {$i <= 2536} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -1997,7 +2001,7 @@ for {set i 2636} {$i <= 3836} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2005,7 +2009,7 @@ for {set i 138} {$i <= 2538} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2014,7 +2018,7 @@ for {set i 2638} {$i <= 3838} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2022,7 +2026,7 @@ for {set i 140} {$i <= 2540} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2031,7 +2035,7 @@ for {set i 2640} {$i <= 3840} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2039,7 +2043,7 @@ for {set i 142} {$i <= 2542} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2048,7 +2052,7 @@ for {set i 2642} {$i <= 3842} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2056,7 +2060,7 @@ for {set i 144} {$i <= 2544} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2065,7 +2069,7 @@ for {set i 2644} {$i <= 3844} {incr i 100} {;
 
 set j [expr $i+2]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2073,7 +2077,7 @@ for {set i 146} {$i <= 2546} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2082,7 +2086,7 @@ for {set i 2646} {$i <= 3846} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2090,7 +2094,7 @@ for {set i 127} {$i <= 2527} {incr i 100} {;
 
 set j [expr $i+7]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2099,7 +2103,7 @@ for {set i 2627} {$i <= 3827} {incr i 100} {;
 
 set j [expr $i+7]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2107,7 +2111,7 @@ for {set i 134} {$i <= 2534} {incr i 100} {;
 
 set j [expr $i-11]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2116,7 +2120,7 @@ for {set i 2634} {$i <= 3834} {incr i 100} {;
 
 set j [expr $i-11]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2124,7 +2128,7 @@ for {set i 119} {$i <= 2519} {incr i 100} {;
 
 set j [expr $i+28]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+60000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2133,7 +2137,7 @@ for {set i 2619} {$i <= 3819} {incr i 100} {;
 
 set j [expr $i+28]
 
-element dispBeamColumn [expr $i+60000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+60000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2141,7 +2145,7 @@ for {set i 147} {$i <= 2547} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 3 1 -mass $mbh
+element dispBeamColumn [expr $i+50000] $i $j 5 3 4 -mass $mbh
 
 };
 
@@ -2150,7 +2154,7 @@ for {set i 2647} {$i <= 3847} {incr i 100} {;
 
 set j [expr $i-32]
 
-element dispBeamColumn [expr $i+50000] $i $j 5 4 1 -mass $mbbh
+element dispBeamColumn [expr $i+50000] $i $j 5 4 4 -mass $mbbh
 
 };
 
@@ -2162,8 +2166,8 @@ puts "defining loads" ;
 
 #columns
 
+pattern Plain 1  "Series -dt 0.01 -filePath smallpath.txt" { ;
 
-pattern Plain 1 Linear {;
 
  eleLoad -ele 101 201 301 401 501 601 701 801 901 1001 1101 1201 1301 1401 1501 1601 1701 1801 1901 2001 2101 2201 2301 2401 2501 2601 2701\
  2801 2901 3001 3101 3201 3301 3401 3501 3601 3701 102 202 302 402 502 602 702 802 902 1002 1102 1202 1302 1402 1502 1602 1702\
@@ -2283,7 +2287,7 @@ pattern Plain 1 Linear {;
  52430 52530 52630 52730 52830 52930 53030 53130 53230 53330 53430 53530 53630 53730 53830 -type -beamUniform -$wysb 0.0 0.0
      
 
-#inner beams   
+#inner beams     ####################################
 
 
  eleLoad -ele 50131 50231 50331 50431 50531 50631 50731 50831 50931 51031 51131 51231 51331 51431 51531 51631 51731 51831 51931 52031 52131\
@@ -2346,6 +2350,7 @@ pattern Plain 1 Linear {;
 };
 
 puts "end of defining loads" ;
+
 ##########################################################
 
 # Static Analysis
@@ -2361,5 +2366,6 @@ analyze 100 ;
 loadConst -time 0.0
                                                                 
 puts "End of Static Analysis"
+
 
 ########################################################
